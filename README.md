@@ -13,7 +13,7 @@ Inside Lexical Analyzer folder you can find:
 
 -Lexer.java >> The implementation of how the code reads a file, go throw it and check each line to produce the tokens.
 
--Test Cases Folder >> Contains examples for bad & good test Cases with extensions .cl
+-Test Cases >> Both examples for bad & good test cases with extensions .cl
 
   For good examples >> you will get a file contains the line number and its tokens.
   (Ex: if file name is helloworld.cl then output will be helloworld.cl-lex)
