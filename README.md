@@ -4,7 +4,7 @@ Compiler for cool programming language made using antlr as a course project for 
 # Team Memebrs:
 Mohamed Ezzat
 
-Mohhamed Okasha
+Mohamed Okasha
 
 Mohammed Aref
 
