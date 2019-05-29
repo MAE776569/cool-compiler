@@ -1,6 +1,19 @@
 # cool-compiler
 Compiler for cool programming language made using antlr as a course project for Compilers Course - 4th year, Computer Engineering Students.
 
+# Team Memebrs:
+Mohamed Ezzat
+
+Mohhamed Okasha
+
+Mohammed Aref
+
+Hassan Raafat
+
+Abdelrahman Elsayed
+
+Ahmed Mahmoud
+
 # Main Parts
 The Lexer, The Parser, Semantic Analysis, Code Generation (in three address code).
 
