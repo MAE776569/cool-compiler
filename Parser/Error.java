@@ -7,7 +7,7 @@ public class Error extends BaseErrorListener {
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 
-        System.out.println("Line :"+line+" Error: "+msg);
+        System.out.println("Line :" + line + " Error: " + msg);
         System.exit(0);
     }
 }

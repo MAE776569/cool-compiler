@@ -9,23 +9,22 @@ public class Parser {
 
     public static void main(String[] args) throws Exception {
 
-        /*if(args.length < 1) {
+        if(args.length < 1) {
             System.err.println("No file is given!");
             return;
         }
 
-        String inputFile = args[0];*/
-        FileInputStream inputStream = new FileInputStream("hello-cst.cl");
+        String inputFile = args[0];
+        FileInputStream inputStream = new FileInputStream(inputFile);
         ANTLRInputStream input = new ANTLRInputStream(inputStream);
-        Lexer2 lexer = new Lexer2(input);
+        LexicalAnalyzer lexer = new LexicalAnalyzer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ParsingParser parser = new ParsingParser(tokens);
+        Parser parser = new Parser(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new Error());
         ParseTree tree = parser.program();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("hello" + "-cst"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile + "-cst"));
         writer.write(tree.toStringTree(parser));
         writer.close();
-
     }
 }

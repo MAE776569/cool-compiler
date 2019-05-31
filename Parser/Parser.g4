@@ -1,6 +1,6 @@
-grammar Parsing;
+grammar Parser;
 
-import Lexer2;
+import LexicalAnalyzer;
 
 program   : classDefine+ # start
           ;
@@ -10,9 +10,8 @@ feature   : ID OPENPARENTHESES (parameter (COMMA parameter)*)? CLOSEPARENTHESES 
           | ID COLON TYPE (ASSIGN expr )? # varDef
           ;
 parameter : ID COLON TYPE # param;
-expr      : ID ASSIGN expr # assign
-          | expr(AT TYPE)? DOT ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # objectCall
-          | ID OPENPARENTHESES  expr ( expr (COMMA expr)*)? CLOSEPARENTHESES # staticCall
+expr      : expr(AT TYPE)? DOT ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # objectCall
+          | ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # staticCall
           | IF expr THEN expr ELSE expr FI # if
           | WHILE expr LOOP expr POOL # while
           | OPENBRACE (expr SEMICOLON)+ CLOSEBRACE  # block
@@ -35,5 +34,6 @@ expr      : ID ASSIGN expr # assign
           | ID # id
           | TRUE # true
           | FALSE # false
+          | ID ASSIGN expr # assign
           ;
 
