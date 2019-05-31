@@ -64,4 +64,3 @@ CLASSTYPE: [A-Z][a-zA-Z_0-9]*;
 SINGLECOMMENT: '--' ~[\r\n]* -> skip;
 MULTICOMMENT: '(*' .*? '*)' -> skip;
 WS: [ \n\t\r]+ -> skip;
-INVALID: . ;

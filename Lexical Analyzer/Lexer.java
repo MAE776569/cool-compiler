@@ -17,32 +17,26 @@ public class Lexer {
         ANTLRInputStream input = new ANTLRInputStream(inputStream);
 
         LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(input);
+	lexicalAnalyzer.removeErrorListeners();
+        lexicalAnalyzer.addErrorListener(new Error());
         Vocabulary vocabulary = lexicalAnalyzer.getVocabulary();
-        StringBuilder output = new StringBuilder();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile + "-lex"));
 
         for (Token token = lexicalAnalyzer.nextToken();
              token.getType() != Token.EOF;
              token = lexicalAnalyzer.nextToken()) {
 
-            if(vocabulary.getSymbolicName(token.getType()).equals("INVALID")){
-                System.out.printf("ERROR: line %d: Lexer: invalid character '%s'", token.getLine(), token.getText());
-                return;
-            }
-
-            output.append(token.getLine());
-            output.append('\n');
+            writer.append(String.valueOf(token.getLine()));
+            writer.newLine();
             String symbolicName = vocabulary.getSymbolicName(token.getType());
-            output.append(symbolicName);
-            output.append('\n');
+            writer.append(symbolicName);
+            writer.newLine();
             if (symbolicName.equals("ID") || symbolicName.equals("CLASSTYPE") || symbolicName.equals("STRING")){
-                output.append(token.getText());
-                output.append('\n');
+                writer.append(token.getText());
+                writer.newLine();
             }
         }
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile + "-lex"));
-        writer.write(output.toString());
         writer.close();
     }
-
 }
