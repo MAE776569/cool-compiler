@@ -19,7 +19,7 @@ public class Parser {
         ANTLRInputStream input = new ANTLRInputStream(inputStream);
         LexicalAnalyzer lexer = new LexicalAnalyzer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        Parser parser = new Parser(tokens);
+        ParsingParser parser = new ParsingParser(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new Error());
         ParseTree tree = parser.program();
