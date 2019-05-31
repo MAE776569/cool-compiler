@@ -23,6 +23,8 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 		label = 1;
 		return visitChildren(ctx);
 	}
+
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -36,7 +38,13 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFunction(ParsingParser.FunctionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunction(ParsingParser.FunctionContext ctx) {
+		System.out.println(ctx.ID().getText()+":");
+		System.out.println("BeginFunc");
+		visit(ctx.expr());
+		System.out.println("EndFunc");
+		return null;
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -98,7 +106,8 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	@Override public T visitLteq(ParsingParser.LteqContext ctx) {
 		String rightValue = (String) visit(ctx.expr(0));
 		String leftValue = (String) visit(ctx.expr(1));
-		return (T) (rightValue + " <= " + leftValue);
+		System.out.printf("t%d = %s <= %s\n", temp, rightValue, leftValue);
+		return (T) ("t" + (temp++));
 	}
 	/**
 	 * {@inheritDoc}
@@ -115,7 +124,16 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStaticCall(ParsingParser.StaticCallContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStaticCall(ParsingParser.StaticCallContext ctx) {
+		int paramSize = ctx.expr().size();
+		String params[] = new String[paramSize];
+		for(int i=0; i < paramSize; ++i)
+			params[i] = (String) visit(ctx.expr(i));
+		for(int i=0; i < paramSize; ++i)
+			System.out.println("param " + params[i]);
+		System.out.printf("t%d = call %s, %d\n", temp, ctx.ID().getText(), paramSize);
+		return (T) String.valueOf("t" + (temp++));
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -125,7 +143,8 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	@Override public T visitLt(ParsingParser.LtContext ctx) {
 		String rightValue = (String) visit(ctx.expr(0));
 		String leftValue = (String) visit(ctx.expr(1));
-		return (T) (rightValue + " < " + leftValue);
+		System.out.printf("t%d = %s < %s\n", temp, rightValue, leftValue);
+		return (T) ("t" + (temp++));
 	}
 	/**
 	 * {@inheritDoc}
@@ -137,7 +156,7 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 		String boolValue = (String) visit(ctx.expr(0));
 		System.out.printf("L%d:\n", label);
 		System.out.printf("ifFalse %s goto L%d\n", boolValue, label + 1);
-		String StmtValue = (String) visit(ctx.expr(1));
+		visit(ctx.expr(1));
 		System.out.printf("goto L%d\n", label++);
 		System.out.printf("L%d:\n", label);
 		return null;
@@ -206,11 +225,11 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 */
 	@Override public T visitIf(ParsingParser.IfContext ctx) {
 		String boolValue = (String) visit(ctx.expr(0));
-		System.out.printf("if %s goto L%d\n", boolValue, label);
+		System.out.printf("ifFalse %s goto L%d\n", boolValue, label);
+		visit(ctx.expr(1));
+		System.out.printf("goto L%d\n", label + 1);
 		System.out.printf("L%d:\n", label++);
-		String trueStmt = (String) visit(ctx.expr(1));
-		System.out.printf("goto L%d\n", label++);
-		String falseStmt = (String) visit(ctx.expr(2));
+		visit(ctx.expr(2));
 		System.out.printf("L%d:\n", label++);
 		return null;
 	}
@@ -248,13 +267,8 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 */
 	@Override public T visitFactExpr(ParsingParser.FactExprContext ctx) {
 		String exprValue = (String) visit(ctx.expr());
-		if(ctx.expr().getChild(1).getText().equals("=")){
-			return (T) ctx.expr().getText();
-		}
-		else{
-			System.out.printf("t%d = %s\n", temp, exprValue);
-			return (T) ("t" + (temp++));
-		}
+		System.out.printf("t%d = %s\n", temp, exprValue);
+		return (T) ("t" + (temp++));
 	}
 	/**
 	 * {@inheritDoc}
@@ -263,7 +277,7 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitFalse(ParsingParser.FalseContext ctx) {
-		return (T) "false";
+		return (T) ctx.FALSE().getText();
 	}
 	/**
 	 * {@inheritDoc}
@@ -274,7 +288,8 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	@Override public T visitEqual(ParsingParser.EqualContext ctx) {
 		String rightValue = (String) visit(ctx.expr(0));
 		String leftValue = (String) visit(ctx.expr(1));
-		return (T) (rightValue + " = " + leftValue);
+		System.out.printf("t%d = %s = %s\n", temp, rightValue, leftValue);
+		return (T) ("t" + (temp++));
 	}
 	/**
 	 * {@inheritDoc}
@@ -282,7 +297,16 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitObjectCall(ParsingParser.ObjectCallContext ctx) { return visitChildren(ctx); }
+	@Override public T visitObjectCall(ParsingParser.ObjectCallContext ctx) {
+		int paramSize = ctx.expr().size();
+		String params[] = new String[paramSize-1];
+		for(int i=1; i < paramSize; ++i)
+			params[i-1] = (String) visit(ctx.expr(i));
+		for(int i=0; i < paramSize-1; ++i)
+			System.out.println("param " + params[i]);
+		System.out.printf("t%d = call %s, %d\n", temp, ctx.ID().getText(), paramSize);
+		return (T) String.valueOf("t" + (temp++));
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -290,7 +314,7 @@ public class ParsingBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitTrue(ParsingParser.TrueContext ctx) {
-		return (T) "true";
+		return (T) ctx.TRUE().getText();
 	}
 	/**
 	 * {@inheritDoc}
